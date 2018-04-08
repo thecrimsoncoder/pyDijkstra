@@ -25,28 +25,33 @@ def findPaths(edges):
     for edge in edges:
         return dijkstra(edges,edge[0],edge[1])
 
-def printOutput():
-    return True
+def buildTableHeader(startingNodes):
+    startingNodes.remove(startingNodes[0])
+    headerString = "     Add to S"
+    for node in startingNodes:
+        headerString = headerString + "     " + node
+
+    return headerString
 
 def dijkstra(edges, startNode, endNode):
     g = defaultdict(list)
-    for l, r, c in edges:
-        g[l].append((c, r))
+    for startingNodeListValue, endingNodeListValue, linkCostListValue in edges:
+        g[startingNodeListValue].append((linkCostListValue, endingNodeListValue))
 
-    q = [(0, startNode, ())]
+    pathList = [(0, startNode, ())]
     visitedNodes = set()
 
-    while q:
-        (cost, v1, path) = heappop(q)
+    while pathList:
+        (cost, v1, path) = heappop(pathList)
         if v1 not in visitedNodes:
             visitedNodes.add(v1)
             path = (v1, path)
             if v1 == endNode:
                 return (cost, path)
 
-            for c, v2 in g.get(v1, ()):
+            for linkCostListValue, v2 in g.get(v1, ()):
                 if v2 not in visitedNodes:
-                    heappush(q, (cost + c, v2, path))
+                    heappush(pathList, (cost + linkCostListValue, v2, path))
 
     return float("∞")
 
@@ -78,16 +83,37 @@ def printList(list):
         print(element)
 
 def main():
-
-    edges = buildEdges()
-    print("Starting Nodes:")
+    # UNCOMMENT FOR FINAL VERSION!!!
+    #edges = buildEdges()
+    edges = [
+                 ('A','B',32),
+                 ('B','C',3242),
+                 ('C','D',23),
+                 ('D','E',1231),
+                 ('E','F',3242),
+                 ('F','G',2123),
+                 ('H','I',4353),
+                 ('I','J',324),
+                 ('Z','A',32242),
+                 ('B','E',342),
+                 ('Z','C',324),
+                 ('K','L',23),
+                 ('L','Q',3242)
+            ]
     startingNodes = buildStartingNodesList(edges)
-    print("Ending Nodes: ")
     endingNodes = buildEndingNodesList(edges)
 
+    print("Graph Data: ")
+    printList(edges)
+    print("\n")
+    print("Dijkstra's Shortest Path: \n")
+    print(buildTableHeader(startingNodes))
+    print("===========================================================================================================")
     for startingNode in startingNodes:
         for endingNode in endingNodes:
-            print(">> Computing path" + startingNode + " to " + endingNode)
             print(dijkstra(edges,startingNode,endingNode))
+    print("===========================================================================================================")
+
+
 
 main()
